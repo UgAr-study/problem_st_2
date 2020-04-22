@@ -2,9 +2,10 @@
 
 int main() {
     int res;
-    char f_name[20] = {0};
+    char f_name[100] = {0};
     char* inp;
 
+    printf ("Write tne path to file with your code: ");
     res = scanf ("%s", f_name);
 
     if (res != 1) {
