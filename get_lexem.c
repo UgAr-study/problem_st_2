@@ -1,7 +1,7 @@
 #include "problem_st_2.h"
 
 int is_end (char c) { // return 1 if we get end of file, else 0
-    if (c == ';') {
+    if (c == ';' || c == '\0') {
         end_of_expr = 1;
         return 1;
     }
@@ -64,13 +64,23 @@ struct lexem_t get_cur_lexem (char** str) {
     if (isalpha(**str) != 0) {
         int i = 0;
         char *name = (char*) calloc(11, sizeof(char));
+
         for (i = 0; isalpha(**str) != 0; ++i)
             name[i] = *(*str)++;
         name[i] = '\0';
-        lexem.kind = VAR_NAME;
-        lexem.lex.var_name = name;
+
+        if (strcmp(name, "print") == 0) {
+            lexem.kind = FUNC;
+            lexem.lex.op = PRINT;
+        } else {
+            lexem.kind = VAR_NAME;
+            lexem.lex.var_name = name;
+        }
+
         while (isspace(**str) != 0)
             ++(*str);
+
+        --(*str);
         return lexem;
     }
 
@@ -123,6 +133,66 @@ struct lexem_t get_cur_lexem (char** str) {
     return lexem;
 }
 
+void print_lexem (struct lexem_t l) {
+    switch (l.kind) {
+        case OP:
+            switch (l.lex.op) {
+                case ADD:
+                    printf ("OP:_ADD ");
+                    break;
+                case SUB:
+                    printf ("OP:_SUB ");
+                    break;
+                case MUL:
+                    printf ("OP:_MUL ");
+                    break;
+                case DIV:
+                    printf ("OP:_DIV ");
+                    break;
+                case APP:
+                    printf ("OP:_APP ");
+                    break;
+                default:
+                    exit(0);
+            }
+            break;
+        case BRACE:
+            switch (l.lex.b) {
+                case LBRAC:
+                    printf ("BRACE:_LBRACE ");
+                    break;
+                case RBRAC:
+                    printf ("BRACE:_RBRACE ");
+                    break;
+                default:
+                    exit(0);
+            }
+            break;
+        case NUM:
+            printf ("NUM:_%d ", l.lex.num);
+            break;
+        case END:
+            printf("END_OF_LINE\n");
+            break;
+        case VAR_NAME:
+            printf("VAR:_%s ", l.lex.var_name);
+            break;
+        case FUNC:
+            switch (l.lex.op) {
+                case SCAN:
+                    printf ("FUNC:_SCAN ");
+                    break;
+                case PRINT:
+                    printf ("FUNC:_PRINT ");
+                    break;
+                default:
+                    exit(0);
+            }
+            break;
+        default:
+            exit(0);
+    }
+}
 
 
 

@@ -10,15 +10,15 @@
 
 int end_of_expr;
 
-char print[] = "print";
+//char print[] = "print";
 
-enum { MAXLEN = 1024, VAR_NUM = 100 };
+enum { VAR_NUM = 100 };
 
 // lexem is operation | brace | number
 enum lexem_kind_t { OP, BRACE, NUM, END, VAR_NAME, FUNC };
 
-// operation is: +, -, *, /, scanf()
-enum operation_t { ADD, SUB, MUL, DIV, APP, SCAN };
+// operation is: +, -, *, /, scanf(), printf()
+enum operation_t { ADD, SUB, MUL, DIV, APP, SCAN, PRINT };
 
 // braces are: (, )
 enum braces_t { LBRAC, RBRAC };
@@ -70,8 +70,12 @@ int is_add_sub (struct lexem_t l, char** str);
 int is_mul_div (struct lexem_t l, char** str);
 int is_left_brace (struct lexem_t l);
 int is_right_brace (struct lexem_t l);
-struct node_t* build_syntax_tree_(char* str);
-void parsing(char* str);
+struct node_t* build_syntax_tree_(char** str);
+void print_lexem (struct lexem_t l);
+
+//code analysis
+char* read_file (char* f_name);
+void parsing(char** str);
 
 //calculating the result
 int calc_result(struct node_t *top);

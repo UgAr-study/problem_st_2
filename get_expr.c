@@ -26,13 +26,16 @@ struct node_t *create (struct lexem_t lex) {
 }
 
 struct node_t* term (char** str) {
+
 #ifdef VISUALIZE
     printf("in term\n");
 #endif
+
     struct node_t* term = NULL;
     struct lexem_t cur_lex;
 
     cur_lex = get_cur_lexem(str);
+
     if (cur_lex.kind == END)
         return term;
 
@@ -67,6 +70,7 @@ struct node_t* term (char** str) {
 }
 
 struct node_t* mult (char** str) {
+
 #ifdef VISUALIZE
     printf ("in mult\n");
 #endif
@@ -77,11 +81,11 @@ struct node_t* mult (char** str) {
     m_left = term (str);
 
 #ifdef VISUALIZE
-    printf ("M: i = %d\n", *i);
+    printf ("M: str is '%c'[%d]\n", **str, **str);
 #endif
 
     if (m_left != NULL) {
-        ++(*str);
+        (*str)++;
         cur_lex = get_cur_lexem(str);
 
         while (is_mul_div(cur_lex, str) == 1) {
@@ -97,6 +101,11 @@ struct node_t* mult (char** str) {
 
             m_left = multy;
             (*str)++;
+
+#ifdef VISUALIZE
+            printf ("\nbefore g_c_l in mult_while str is '%c'[%d]\n", **str, **str);
+#endif
+
             cur_lex = get_cur_lexem(str);
         }
     }
@@ -105,6 +114,7 @@ struct node_t* mult (char** str) {
 }
 
 struct node_t* expr (char** str) {
+
 #ifdef VISUALIZE
     printf ("in expr\n");
 #endif
@@ -115,7 +125,7 @@ struct node_t* expr (char** str) {
     e_left = mult(str);
 
 #ifdef VISUALIZE
-    printf ("E: i = %d\n", *i);
+    printf ("E: str is '%c'[%d]\n", **str, **str);
 #endif
 
     if (e_left != NULL) {
@@ -145,9 +155,10 @@ struct node_t* expr (char** str) {
     return e_left;
 }
 
-struct node_t* build_syntax_tree_(char* str) {
+struct node_t* build_syntax_tree_(char** str) {
+    end_of_expr = 0;
     struct node_t* tree;
-    tree = expr (&str);
+    tree = expr (str);
 
     if (end_of_expr != 1) {
         printf ("Not reach end of expression! Check braces\n");
@@ -183,11 +194,18 @@ int calc_result(struct node_t *top) {
                 case SCAN:
                     printf ("\nPlease, input this variable: %s = ", top->left->lex.lex.var_name);
                     int res = scanf ("%d", &result);
+
                     if (res != 1) {
                         printf ("ERROR: wrong type\n");
                         exit (0);
                     }
+
                     printf ("\n");
+                    hash_table[hash].flag = 1;
+                    hash_table[hash].val = result;
+                    return result;
+                case APP:
+                    result = calc_result(top->right);
                     hash_table[hash].flag = 1;
                     hash_table[hash].val = result;
                     return result;
@@ -246,14 +264,32 @@ void print_node (struct lexem_t lex) {
                     printf ("DIV ");
                     break;
                 default:
-                    exit(1);
+                    exit(0);
             }
             break;
         case NUM:
             printf ("%d ", lex.lex.num);
             break;
+        case VAR_NAME:
+            printf ("%s ", lex.lex.var_name);
+            break;
+        case FUNC:
+            switch (lex.lex.op) {
+                case SCAN:
+                    printf ("SCAN ");
+                    break;
+                case PRINT:
+                    printf ("PRINT ");
+                    break;
+                case APP:
+                    printf ("APP ");
+                    break;
+                default:
+                    exit (0);
+            }
+            break;
         default:
-            exit(1);
+            exit(0);
     }
 }
 
@@ -284,6 +320,10 @@ void print_tree (struct node_t* top) {
 }
 
 void free_syntax_tree(struct node_t * top) {
+
+    if (top == NULL || top->left->lex.kind == VAR_NAME)
+        return;
+
 
     if (top->left == NULL && top->right == NULL) {
         free (top);
