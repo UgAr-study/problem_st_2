@@ -1,0 +1,6 @@
+a = ?;
+c = ?;
+b = c * (a + 1);
+k = a;
+print k;
+print b * b;

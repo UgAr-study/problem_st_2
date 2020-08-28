@@ -42,8 +42,17 @@ void free_var_arr (struct node_t* arr_of_var) {
 void parsing(char** str) {
     struct lexem_t cur_lex;
 
+
+#ifdef DEBAGINFO
+    int d = 0;
+#endif
+
     while (**str != '\0') {
         cur_lex = get_cur_lexem(str);
+
+#ifdef DEBAGINFO
+        printf ("%% %d\n", d++);
+#endif
 
 #ifdef VISUALIZE
         print_lexem(cur_lex);
@@ -66,13 +75,22 @@ void parsing(char** str) {
             continue;
         }
 
-        if (*(++(*str)) != '=') {
+        if (cur_lex.kind == VAR_NAME && *(++(*str)) != '=') {
             printf ("Wrong format: expected '=' instead '%c' after variable\n", **str);
             exit (0);
         }
 
+#ifdef DEBAGINFO
+        printf ("after all ifs\n");
+#endif
+
         (*str)++;
         unsigned hash = hash_func(cur_lex.lex.var_name);
+
+#ifdef DEBAGINFO
+        printf ("after hash_func hash = %u\n", hash);
+#endif
+
         var_arr[hash].left = create (cur_lex);
         var_arr[hash].lex.kind = FUNC;
         var_arr[hash].lex.lex.op = APP;

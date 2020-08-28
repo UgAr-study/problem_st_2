@@ -14,13 +14,14 @@ int end_of_expr;
 
 enum { VAR_NUM = 100 };
 
-// lexem is operation | brace | number
+// lexem is: operation | brace | number | end of file |
+//  name of variable | function
 enum lexem_kind_t { OP, BRACE, NUM, END, VAR_NAME, FUNC };
 
-// operation is: +, -, *, /, scanf(), printf()
+// operation is: + | - | * | / | scanf() | printf()
 enum operation_t { ADD, SUB, MUL, DIV, APP, SCAN, PRINT };
 
-// braces are: (, )
+// braces are: ( | )
 enum braces_t { LBRAC, RBRAC };
 
 
@@ -86,3 +87,5 @@ void print_tree (struct node_t* top);
 void print_node (struct lexem_t lex);
 //free tree
 void free_syntax_tree(struct node_t * top);
+//free var_arr
+void free_var_arr (struct node_t* arr_of_var);

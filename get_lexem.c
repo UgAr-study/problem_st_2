@@ -22,7 +22,7 @@ int is_add_sub (struct lexem_t l, char** str) {
 }
 
 int is_mul_div (struct lexem_t l, char** str) {
-    if (l.kind == OP) {
+    if (l.kind == OP ) {
         if (l.lex.op == MUL || l.lex.op == DIV)
             return 1;
     }

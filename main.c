@@ -1,10 +1,12 @@
 #include "problem_st_2.h"
 
 int main() {
-    int res;
-    char f_name[100] = {0};
+
     char* inp;
 
+#ifdef REALTEST
+    int res;
+    char f_name[100] = {0};
     printf ("Write tne path to file with your code: ");
     res = scanf ("%s", f_name);
 
@@ -14,6 +16,12 @@ int main() {
     }
 
     inp = read_file (f_name);
+#endif
+
+
+    inp = read_file ("tests/001.txt");
+
     parsing(&inp);
+
     return 0;
 }

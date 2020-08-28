@@ -6,10 +6,11 @@
 // term ::= ( expr ) | number
 
 unsigned hash_func (const char* str) {
-    unsigned hash = 113;
-    for (int i = 0; i < strlen (str); ++i)
-        hash += (((hash << 5) + hash) + str[i]) % 101;
-    return hash % 101 - 1;
+    int i = 0;
+    int hash = 0;
+    for (i = 0; i < strlen(str); ++i)
+        hash += (int) (*str++);
+    return hash % VAR_NUM;
 }
 
 struct node_t* expr (char** str);
